@@ -30,7 +30,7 @@ build job: 'Another jobs'
 }
 
 stage('Packaging and Publishing results') {
-archiveArtifacts '**/*.jar'
+
 sh 'tar -c -f /$JENKINS_HOME/workspace/Pipeline/pipeline-$BUILD_NUMBER.tar.gz *'
 nexusArtifactUploader artifacts: [[artifactId: 'Artifact', classifier: '', file: '$JENKINS_HOME/workspace/Pipeline/pipeline-$BUILD_NUMBER.tar.gz', type: 'jar']], credentialsId: '712f47fe-78e3-4803-8974-ac42c9bacbd1', groupId: 'GroupId', nexusUrl: '172.23.11.47:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'Illia', version: '1'
 }
