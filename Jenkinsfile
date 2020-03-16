@@ -1,5 +1,5 @@
-node {
-    currentBuild.result = "SUCCESS"
+node { try{
+    
             stage('Source') {
                 git 'https://github.com/Yarmaknuti/gradle.git'
                 }
@@ -14,7 +14,7 @@ sh "'${gradleHome}' clean build test "
                 parallel(
                     firstBranch: {
                         sleep 1 },
-                                         secondBranch: {
+                                   secondBranch: {
                                                 sleep 2
                                              
                                          },
@@ -43,13 +43,13 @@ stage ('Deploy'){
 
 sh ('wget http://172.23.11.47:8081/repository/Illia/GroupId/Artifact/$BUILD_NUMBER/Artifact-$BUILD_NUMBER.tar.gz')
 sh ('tar -xf pipeline-$BUILD_NUMBER.tar.gz')
-}
-  stage('Email notifications') {
-        if ( currentBuild.result == 'SUCCESS') {
-            emailext body: 'Job ok', recipientProviders: [culprits()], subject: 'Job', to: 'yarmaknuti@gmail.com'
-      
-        } else {
-             emailext body: 'Job fail ', recipientProviders: [culprits()], subject: 'Job', to: 'yarmaknuti@gmail.com'
-        }
-    }
-}
+} 
+  stage('Email notifications') 
+         emailext body: 'Job ${env.JOB_NAME} ok', recipientProviders: [culprits()], subject: 'Job', to: 'yarmaknuti@gmail.com'
+}catch (e) {
+     currentBuild.result = "FAILED"
+  emailext body: 'Job ${env.JOB_NAME} fail ', recipientProviders: [culprits()], subject: 'Job', to: 'yarmaknuti@gmail.com'
+     throw e
+   }
+ }
+
